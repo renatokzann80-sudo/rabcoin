@@ -25,5 +25,5 @@ The web search found commercially sold cyberpunk rabbit art; those third-party a
 
 Fonts: Syne and Space Grotesk via Google Fonts, with local fallbacks.
 
-Git upload and deployment await user approval.
+Source code is maintained at https://github.com/renatokzann80-sudo/rabcoin.
 
