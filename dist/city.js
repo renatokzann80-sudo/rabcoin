@@ -51,7 +51,7 @@ const uniforms={};for(const name of ['resolution','imageSize','pointer','clock',
 const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.uniform1i(uniforms.picture,0);
 const image=new Image();image.onload=()=>{if(lost)return;gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,image);gl.uniform2f(uniforms.imageSize,image.naturalWidth,image.naturalHeight);ready=true;resize();canvas.classList.add('ready');start();};image.src='assets/rabverse-rooftop.png';
 const target={x:0,y:0},current={x:0,y:0};
-function resize(){const dpr=Math.min(devicePixelRatio||1,innerWidth<700?1.25:1.5);canvas.width=Math.round(canvas.clientWidth*dpr);canvas.height=Math.round(canvas.clientHeight*dpr);gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uniforms.resolution,canvas.width,canvas.height);draw();}
+function resize(){const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(canvas.clientWidth*dpr);canvas.height=Math.round(canvas.clientHeight*dpr);gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uniforms.resolution,canvas.width,canvas.height);draw();}
 function draw(){if(!ready||lost)return;gl.uniform2f(uniforms.pointer,current.x,current.y);gl.uniform1f(uniforms.clock,time);gl.uniform1f(uniforms.pulse,boost);gl.drawArrays(gl.TRIANGLES,0,6);}
 function tick(now){frame=0;if(paused||!visible||document.hidden||lost)return;const dt=Math.min((now-last)/1000,.05);last=now;time+=dt;boost=Math.max(0,boost-dt*.6);current.x+=(target.x-current.x)*.045;current.y+=(target.y-current.y)*.045;draw();frame=requestAnimationFrame(tick);}
 function start(){if(frame||!ready||paused||!visible||document.hidden||lost)return;last=performance.now();frame=requestAnimationFrame(tick);}
@@ -66,3 +66,4 @@ reduced.addEventListener('change',event=>{paused=event.matches;sync();if(paused)
 let warpTimer;document.getElementById('warp').addEventListener('click',()=>{const text=document.querySelector('#warp span');text.textContent='TOLD YOU.';if(!paused&&!reduced.matches)boost=1;clearTimeout(warpTimer);warpTimer=setTimeout(()=>{text.textContent='DO NOT PRESS';},2200);});
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;stop();canvas.classList.remove('ready');document.getElementById('warp').hidden=true;});
 })();
+
