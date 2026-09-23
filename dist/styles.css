@@ -15,4 +15,5 @@
   .scene-label{bottom:20px}
   .warp-button{top:61%}
 }
+@media(max-width:700px){.city-fallback{background-image:url('assets/rabverse-rooftop-mobile.png');background-position:50% 50%}}
 
