@@ -15,7 +15,7 @@ float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 void main(){
 vec2 fit=vec2(1.);float screenAspect=resolution.x/resolution.y;float imageAspect=imageSize.x/imageSize.y;
 if(screenAspect>imageAspect)fit.y=imageAspect/screenAspect;else fit.x=screenAspect/imageAspect;
-vec2 anchor=vec2(screenAspect<.9?.65:.52,.51);
+vec2 anchor=vec2(imageAspect<.9?.5:(screenAspect<.9?.65:.52),.51);
 vec2 st=(uv-.5)*fit+anchor;
 float depth=.35+.65*pow(1.-uv.y,2.);
 st+=pointer*vec2(.008,.005)*depth+vec2(sin(clock*.09)*.003,cos(clock*.11)*.002);
@@ -49,7 +49,7 @@ const program=gl.createProgram();gl.attachShader(program,vs);gl.attachShader(pro
 const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);const pos=gl.getAttribLocation(program,'a');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
 const uniforms={};for(const name of ['resolution','imageSize','pointer','clock','pulse','picture'])uniforms[name]=gl.getUniformLocation(program,name);
 const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.uniform1i(uniforms.picture,0);
-const image=new Image();image.onload=()=>{if(lost)return;gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,image);gl.uniform2f(uniforms.imageSize,image.naturalWidth,image.naturalHeight);ready=true;resize();canvas.classList.add('ready');start();};image.src='assets/rabverse-rooftop.png';
+const image=new Image();image.onload=()=>{if(lost)return;gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,image);gl.uniform2f(uniforms.imageSize,image.naturalWidth,image.naturalHeight);ready=true;resize();canvas.classList.add('ready');start();};image.src=matchMedia('(max-width:700px)').matches?'assets/rabverse-rooftop-mobile.png':'assets/rabverse-rooftop.png';
 const target={x:0,y:0},current={x:0,y:0};
 function resize(){const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(canvas.clientWidth*dpr);canvas.height=Math.round(canvas.clientHeight*dpr);gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(uniforms.resolution,canvas.width,canvas.height);draw();}
 function draw(){if(!ready||lost)return;gl.uniform2f(uniforms.pointer,current.x,current.y);gl.uniform1f(uniforms.clock,time);gl.uniform1f(uniforms.pulse,boost);gl.drawArrays(gl.TRIANGLES,0,6);}
